@@ -1,0 +1,59 @@
+import { useEffect, useState } from "react";
+import axios from "@/config/api";
+import { useParams } from 'react-router';
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button"
+
+export default function Show() {
+  const [festival, setFestival] = useState([]);
+  const { id } = useParams();
+
+  let token = localStorage.getItem('token');
+
+  useEffect(() => {
+    const fetchFestival = async () => {
+      const options = {
+        method: "GET",
+        url: `https://festivals-api.vercel.app/festivals/${id}`,
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+      };
+
+      try {
+        let response = await axios.request(options);
+        console.log(response.data);
+        setFestival(response.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchFestival();
+  }, []);
+
+  return(
+   <Card className="w-full max-w-md">
+      <CardHeader>
+        <CardTitle>{festival.title}</CardTitle>
+        <CardDescription>
+          {festival.description}
+        </CardDescription>
+
+        <CardContent><img src={festival.image_path} alt={festival.title} /></CardContent>
+      </CardHeader>
+     
+      <CardFooter className="flex-col gap-2">
+      
+      </CardFooter>
+    </Card>
+  );
+}
